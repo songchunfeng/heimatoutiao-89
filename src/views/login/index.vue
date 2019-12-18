@@ -3,7 +3,8 @@
     <el-card class="login-card">
       <div class="title"><img src="../../assets/img/logo_index.png" alt=""></div>
       <!-- 表单的容器是el-form 通过model设置校验数据，rules属性设置校验规则-->
-      <el-form :model="formData" :rules="loginRules">
+      <!-- 给el-form设置ref属性为了获取标签 -->
+      <el-form :model="formData" :rules="loginRules" ref="myForm">
         <!-- 标签要写在el-form-item中 绑定prop属性进行校验-->
         <el-form-item prop="moblie">
           <el-input placeholder="请输入手机号" v-model="formData.moblie"></el-input>
@@ -17,7 +18,8 @@
           <el-checkbox v-model="formData.check">我已阅读并同意用户协议和隐私条款</el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" style="width:100%">登录</el-button>
+          <!-- button设置一个方法来校验整个表单 -->
+          <el-button type="primary" style="width:100%" @click="submitLogin">登录</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -31,7 +33,7 @@ export default {
       formData: {
         moblie: '',
         code: '',
-        check: 'false'
+        check: false
       },
       loginRules: {
         // required必填项,如果不填 就无法通过校验/如果为true,就表示该字段必填
@@ -50,6 +52,17 @@ export default {
           }
         } }]
       }
+    }
+  },
+  methods: {
+    // 校验整个表单方法
+    submitLogin () {
+      // validate 是一个方法 => 方法中传入的一个函数 两个校验参数  是否校验成功/未校验成功的字段
+      this.$refs.myForm.validate(function (isOk) {
+        if (isOk) {
+          console.log('后台传入数据')
+        }
+      })
     }
   }
 }
