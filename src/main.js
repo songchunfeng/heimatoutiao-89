@@ -5,10 +5,12 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import './style/index.less'
 import axios from 'axios'
+import component from './components/index'
 
-// axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'
+axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'
 Vue.prototype.$axios = axios
 Vue.use(ElementUI)
+Vue.use(component)// 注册全局组件对象
 
 Vue.config.productionTip = false
 

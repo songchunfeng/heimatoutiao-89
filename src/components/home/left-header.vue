@@ -6,14 +6,14 @@
        </el-col>
        <el-col :span='4' class="right">
          <el-row type="flex" justify="end" align='middle'>
-           <img src="../../assets/img/avatar.jpg" alt="">
+           <img :src="useInfo.photo ? useInfo.photo : defaultImg" alt="">
            <!-- 下拉菜单 -->
-           <el-dropdown>
-             <span>1234</span>
+           <el-dropdown @command='handleCommand'>
+             <span>{{useInfo.name}}</span>
              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>个人信息</el-dropdown-item>
-                <el-dropdown-item>Git地址</el-dropdown-item>
-                <el-dropdown-item>退出</el-dropdown-item>
+                <el-dropdown-item command="info">个人信息</el-dropdown-item>
+                <el-dropdown-item command="git">Git地址</el-dropdown-item>
+                <el-dropdown-item command="lgout">退出</el-dropdown-item>
              </el-dropdown-menu>
            </el-dropdown>
          </el-row>
@@ -23,7 +23,33 @@
 
 <script>
 export default {
-
+  data () {
+    return {
+      useInfo: {},
+      defaultImg: require('../../assets/img/avatar.jpg')
+    }
+  },
+  created () {
+    let token = window.localStorage.getItem('user-token')
+    this.$axios({
+      url: '/user/profile',
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then(result => {
+      this.useInfo = result.data.data
+    })
+  },
+  methods: {
+    handleCommand (command) {
+      if (command === 'lgout') {
+        window.localStorage.removeItem('user-token')
+        this.$router.push('/login')
+      } else if (command === 'git') {
+        window.location.href = 'https://github.com/songchunfeng/heimatoutiao-89'
+      }
+    }
+  }
 }
 </script>
 

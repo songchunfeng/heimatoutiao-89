@@ -19,13 +19,13 @@
 
 <script>
 // @ is an alias to /src
-import leftAside from '../../components/home/left-aside'
-import leftHeader from '../../components/home/left-header'
+// import leftAside from '../../components/home/left-aside'
+// import leftHeader from '../../components/home/left-header'
 
 export default {
-  components: {
-    'lf-aside': leftAside,
-    'lf-header': leftHeader
-  }
+  // components: {
+  //   // 'lf-aside': leftAside,
+  //   // 'lf-header': leftHeader
+  // }
 }
 </script>
