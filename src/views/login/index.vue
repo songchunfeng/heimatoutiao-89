@@ -70,13 +70,8 @@ export default {
             // 请求成功进入
             // 存储token令牌方便后续请求
             // token在resul对象中
-            window.localStorage.setItem('user-token', result.data.data.token)
+            window.localStorage.setItem('user-token', result.data.token)
             this.$router.push('/home')
-          }).catch(() => {
-            this.$message({
-              message: '您输入的信息有误',
-              type: 'warning'
-            })
           })
         }
       })
