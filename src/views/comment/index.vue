@@ -18,10 +18,19 @@
               <!-- el-table-colum中有作用域插槽 有row column index -->
               <template slot-scope="obj">
                   <el-button type="text" size="small">修改</el-button>
-                  <el-button type="text" size="small">{{obj.row.comment_status?"关闭评论":"打开评论"}}</el-button>
+                  <el-button type="text" size="small" @click="openOrClose(obj.row)">{{obj.row.comment_status?"关闭评论":"打开评论"}}</el-button>
               </template>
           </el-table-column>
       </el-table>
+      <el-row type='flex' justify='center' align='middle' style="height:80px">
+        <el-pagination
+            background
+            layout="prev, pager, next"
+            :current-page="page.currentPage"
+            :page-size='page.pageSizes'
+            :total="page.total" @current-change="currentChange">
+        </el-pagination>
+      </el-row>
   </el-card>
 </template>
 
@@ -29,21 +38,39 @@
 export default {
   data () {
     return {
-      list: []
+      list: [],
+      page: {
+        total: 0, // 总页数
+        currentPage: 1, // 当前页数
+        pageSizes: 10 // 每页显示个数选择器的选项设置
+      }
     }
   },
   methods: {
+    currentChange (newPage) {
+    //   console.log(newPage)
+      // 将当前的页数给currentPage属性
+      this.page.currentPage = newPage
+      // 重新调用方法页面
+      this.getComment()
+    },
     getComment () {
       this.$axios({
         url: 'articles',
         // axios中有params参数
         // 让接口调用评论数据
+        // Query参数中page代表当前页数，per_page代表每页数量
         params: {
-          response_type: 'comment'
+          response_type: 'comment',
+          page: this.page.currentPage,
+          per_page: this.page.pageSizes
         }
 
       }).then(result => {
         this.list = result.data.results
+        // 获取文章的总页数
+        this.page.total = result.data.total_count
+        // console.log(result)
       })
     },
     formatterBool (row, column, cellValue, index) {
@@ -52,6 +79,31 @@ export default {
       // cellValue 当前单元格的值
       // index 当前下标
       return cellValue ? '正常' : '关闭'
+    },
+    openOrClose (row) {
+      let mess = row.comment_status ? '关闭' : '打开'
+      // $confirm 确定时  进入then 取消时进入catch
+      this.$confirm(`您是确定${mess}评论么`).then(() => {
+      // 确定的话调用接口
+        //   地址参数/query参数/url参数/路由参数 => 可以在params中写 也可以直接拼接到url地址上
+        this.$axios({
+          url: '/comments/status',
+          method: 'put',
+          params: {
+            article_id: row.id.toString()
+          },
+          data: {
+            allow_comment: !row.comment_status
+          }
+        }).then(result => {
+        //   请求发送成功后有提示信息
+          this.$message({
+            type: 'success',
+            message: '请求成功'
+          })
+          this.getComment()
+        })
+      })
     }
   },
   created () {

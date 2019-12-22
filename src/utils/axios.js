@@ -2,6 +2,7 @@
 import axios from 'axios'
 import router from '../router'// 引入路由实例
 import { Message } from 'element-ui'// 引入提示信息对象
+import JSONBig from 'json-bigint'
 
 axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0'
 // axios请求拦截，用interceptors
@@ -19,6 +20,10 @@ axios.interceptors.request.use(function (config) {
 )
 
 // 响应拦截器:数据返回来在到达then之前拦截
+// 数据到达then之前还要先进行处理，将数字进行处理
+axios.defaults.transformResponse = [function (data) {
+  return JSONBig.parse(data)
+}]
 axios.interceptors.response.use(function (response) {
   // 请求成功进入
   // return返回的数据给then
@@ -53,6 +58,8 @@ axios.interceptors.response.use(function (response) {
   }
   // 状态码提示
   Message({ type: 'warning', message })
+  // 让错误拦截器的内容直接进入catc中 不进入then
+  return Promise.reject(error)
 })
 
 // 到处axios
