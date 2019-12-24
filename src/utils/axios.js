@@ -22,7 +22,7 @@ axios.interceptors.request.use(function (config) {
 // 响应拦截器:数据返回来在到达then之前拦截
 // 数据到达then之前还要先进行处理，将数字进行处理
 axios.defaults.transformResponse = [function (data) {
-  return JSONBig.parse(data)
+  return data ? JSONBig.parse(data) : {}
 }]
 axios.interceptors.response.use(function (response) {
   // 请求成功进入

@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card v-loading="loading">
       <!-- card也有具名插槽header 将面包屑放入具名插槽header中 -->
       <bread-crumb slot="header">
         <template slot="title">
@@ -38,6 +38,7 @@
 export default {
   data () {
     return {
+      loading: false, // 页面加载默认为false
       list: [],
       page: {
         total: 0, // 总页数
@@ -70,6 +71,8 @@ export default {
         this.list = result.data.results
         // 获取文章的总页数
         this.page.total = result.data.total_count
+        // 数据获取成功后显示加载页面
+        this.loading = false
         // console.log(result)
       })
     },
@@ -107,6 +110,8 @@ export default {
     }
   },
   created () {
+    // 页面加载效果
+    this.loading = true
     // 调用method中的方法获取评论列表
     this.getComment()
   }
