@@ -56,6 +56,27 @@ export default {
       }
     }
   },
+  // 因为修改和发布用的时一个组件，切换页面是组件不会被销毁，所以需要用watch监听事件来改变规则
+  watch: {
+    $router: function (to, from) {
+      //   Object.keys => 将对象中的属性抽提成一个数组
+      // to.params为页面的id
+      if (Object.keys(to.params).length) {
+        // 如果有参数则为修改
+      } else {
+        //   没有参数为发布
+        this.formData = {
+          title: '', // 标题校验
+          content: '', // 内容校验
+          cover: {
+            type: 0, //   封面类型 -1:自动，0-无图，1-1张，3-3张
+            images: [] // 存储的图片的地址
+          },
+          channel_id: null // 频道id
+        }
+      }
+    }
+  },
   methods: {
     // 发布文章
     publishArticle (draft) {

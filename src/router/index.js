@@ -28,6 +28,10 @@ const routes = [{
   {
     path: 'publish',
     component: () => import('../views/publish')
+  },
+  {
+    path: 'publish/:id',
+    component: () => import('../views/publish')
   }]
 }, {
   path: '/',
