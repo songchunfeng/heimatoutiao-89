@@ -1,7 +1,7 @@
 <template>
      <el-row class='layout-header' type='flex' justify='space-between' align='middle'>
        <el-col  class='left' :span='6'>
-         <i class="el-icon-s-fold"></i>
+         <i @click="collapseOrOpen" :class="{'el-icon-s-fold':!collapse,'el-icon-s-unfold':collapse}"></i>
          <span class="title">江苏传智播客教育科技股份有限公司</span>
        </el-col>
        <el-col :span='4' class="right">
@@ -22,31 +22,48 @@
 </template>
 
 <script>
+import eventBus from '../../utils/eventBus'
 export default {
   data () {
     return {
+      collapse: false, // 是否折叠
       useInfo: {},
       defaultImg: require('../../assets/img/avatar.jpg')
     }
   },
   created () {
-    // let token = window.localStorage.getItem('user-token')
-    this.$axios({
-      url: '/user/profile'
-      // headers: {
-      //   Authorization: `Bearer ${token}`
-      // }
-    }).then(result => {
-      this.useInfo = result.data
+    this.getUserInfo()
+    // 接收到参数后，在页面渲染时就获取数据
+    eventBus.$on('updateUserInfoSuccess', () => {
+      // 重新调用方法
+      this.getUserInfo()
     })
   },
   methods: {
+    collapseOrOpen () {
+      this.collapse = !this.collapse
+      // 触发公共事件
+      eventBus.$emit('changeCollqpse')
+    },
+    getUserInfo () {
+      // let token = window.localStorage.getItem('user-token')
+      this.$axios({
+        url: '/user/profile'
+      // headers: {
+      //   Authorization: `Bearer ${token}`
+      // }
+      }).then(result => {
+        this.useInfo = result.data
+      })
+    },
     handleCommand (command) {
       if (command === 'lgout') {
         window.localStorage.removeItem('user-token')
         this.$router.push('/login')
       } else if (command === 'git') {
         window.location.href = 'https://github.com/songchunfeng/heimatoutiao-89'
+      } else if (command === 'info') {
+        this.$router.push('/home/account')
       }
     }
   }

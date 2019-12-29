@@ -14,8 +14,9 @@ axios.interceptors.request.use(function (config) {
 
   config.headers['Authorization'] = `Bearer ${token}`// 将token放入Authorization中
   return config// 返回config
-}, function () {
+}, function (error) {
 // 请求失败进入
+  return Promise.reject(error)
 }
 )
 
@@ -32,6 +33,7 @@ axios.interceptors.response.use(function (response) {
   // 失败时执行
   // 所有失败都在这执行
   // 获取状态码，根据状态码执行命令
+  // debugger
   let status = error.response.status // 获取状态码
   let message = ''
   switch (status) {

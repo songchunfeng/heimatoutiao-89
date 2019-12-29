@@ -8,16 +8,18 @@
         <el-input style="width:60%" v-model="formData.title"></el-input>
       </el-form-item>
       <el-form-item label="内容" prop="content">
-        <el-input type="textarea" v-model="formData.content"></el-input>
+        <quill-editor type="textarea" v-model="formData.content" style="height:400px"></quill-editor>
       </el-form-item>
-      <el-form-item label="封面">
-        <el-radio-group v-model="formData.cover.type">
+      <el-form-item label="封面" style="margin-top:150px">
+        <el-radio-group v-model="formData.cover.type" @change="changeType">
           <el-radio :label="1">单图</el-radio>
           <el-radio :label="3">三图</el-radio>
           <el-radio :label="0">无图</el-radio>
           <el-radio :label="-1">自动</el-radio>
         </el-radio-group>
       </el-form-item>
+      <!-- 接收子组件参数 -->
+      <cover-images :list="formData.cover.images" @clickOneImg="receiveImg"></cover-images>
       <el-form-item label="频道" prop="channel_id">
         <el-select value v-model="formData.channel_id">
           <el-option v-for="item in channels" :key="item.id" :label="item.name" :value="item.id"></el-option>
@@ -58,6 +60,16 @@ export default {
   },
   // 因为修改和发布用的时一个组件，切换页面是组件不会被销毁，所以需要用watch监听事件来改变规则
   watch: {
+    // 改变type的值来控制images的值改变
+    // 'formData.cover.type': function () {
+    //   if (this.formData.cover.type === 0 || this.formData.cover.type === -1) {
+    //     this.formData.cover.images = []
+    //   } else if (this.formData.cover.type === 1) {
+    //     this.formData.cover.images = ['']
+    //   } else if (this.formData.cover.type === 3) {
+    //     this.formData.cover.images = ['', '', '']
+    //   }
+    // },
     $router: function (to, from) {
       //   Object.keys => 将对象中的属性抽提成一个数组
       // to.params为页面的id
@@ -78,12 +90,33 @@ export default {
     }
   },
   methods: {
+    // 接收子组件传的参数
+    receiveImg (img, index) {
+      // // 修改images
+      this.formData.cover.images = this.formData.cover.images.map(function (item, i) {
+        if (i === index) {
+          return img
+        }
+        return item
+      })
+    },
+    // 改变type
+    changeType () {
+      if (this.formData.cover.type === 0 || this.formData.cover.type === -1) {
+        this.formData.cover.images = []
+      } else if (this.formData.cover.type === 1) {
+        this.formData.cover.images = ['']
+      } else if (this.formData.cover.type === 3) {
+        this.formData.cover.images = ['', '', '']
+      }
+    },
     // 发布文章
     publishArticle (draft) {
       this.$refs.myForm.validate(isOk => {
+        let { id } = this.$route.params
         this.$axios({
-          url: '/articles',
-          method: 'post',
+          url: id ? `/articles/${id}` : '/articles/',
+          method: id ? 'put' : 'post',
           params: { draft },
           data: this.formData
         }).then(() => {
@@ -97,10 +130,22 @@ export default {
       }).then(result => {
         this.channels = result.data.channels
       })
+    },
+    // 获取指定id的文章
+    getArticleById (id) {
+      this.$axios({
+        url: `/articles/${id}`
+      }).then(result => {
+        this.formData = result.data
+      })
     }
   },
   created () {
     this.getChannels()
+    // 获取修改页面当前文章的id
+    let { id } = this.$route.params
+    // 如果id存在就调用获取文章内容的方法
+    id && this.getArticleById(id)
   }
 }
 </script>

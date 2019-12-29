@@ -2,7 +2,7 @@
 <!-- 外层容器 -->
   <el-container>
     <!-- 左边栏 -->
-    <el-aside style="background-color:#323745;min-height:100vh;width:230px">
+    <el-aside :style="{width: collapse ? '60px':'230px'}" style="background-color:#323745;min-height:100vh;">
       <lf-aside></lf-aside>
     </el-aside>
     <!-- 右侧容器 -->
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import eventBus from '../../utils/eventBus'
 // @ is an alias to /src
 // import leftAside from '../../components/home/left-aside'
 // import leftHeader from '../../components/home/left-header'
@@ -29,5 +30,15 @@ export default {
   //   // 'lf-aside': leftAside,
   //   // 'lf-header': leftHeader
   // }
+  data () {
+    return {
+      collapse: false
+    }
+  },
+  created () {
+    eventBus.$on('changeCollqpse', () => {
+      this.collapse = !this.collapse
+    })
+  }
 }
 </script>

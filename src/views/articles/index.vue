@@ -97,7 +97,7 @@ export default {
       },
       channels: [],
       list: [], // 文章内容列表,
-      defaultImg: require('../../assets/img/IMG_0160.jpg')// 无图片时的默认图片
+      defaultImg: require('../../assets/img/123.jpg')// 无图片时的默认图片
     }
   },
   filters: {
