@@ -3,7 +3,7 @@
   <el-container>
     <!-- 左边栏 -->
     <el-aside :style="{width: collapse ? '60px':'230px'}" style="background-color:#323745;min-height:100vh;">
-      <lf-aside></lf-aside>
+      <lf-aside :collapse="collapse"></lf-aside>
     </el-aside>
     <!-- 右侧容器 -->
     <el-container>

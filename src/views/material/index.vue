@@ -73,39 +73,35 @@ export default {
   },
   methods: {
     // 删除素材
-    delMaterial (id) {
-      this.$confirm('您确定删除么').then(() => {
-        this.$axios({
-          url: `/user/images/${id}`,
-          method: 'delete'
-        }).then(() => {
-          this.getMaterial()
-        })
+    async delMaterial (id) {
+      await this.$confirm('您确定删除么')
+      await this.$axios({
+        url: `/user/images/${id}`,
+        method: 'delete'
       })
+      this.getMaterial()
     },
     // 点击收藏
-    collectOrCancel (row) {
-      this.$axios({
+    async collectOrCancel (row) {
+      await this.$axios({
         url: `/user/images/${row.id}`,
         method: 'put',
         data: {
           collect: !row.is_collected
         }
-      }).then(() => {
-        this.getMaterial()
       })
+      this.getMaterial()
     },
     // 上传图片
-    uploadImg (params) {
+    async uploadImg (params) {
       let form = new FormData()
       form.append('image', params.file)
-      this.$axios({
+      await this.$axios({
         url: '/user/images',
         method: 'post',
         data: form
-      }).then(result => {
-        this.getMaterial()
       })
+      this.getMaterial()
     },
     // 切换分页
     changePage (newPage) {
@@ -119,8 +115,8 @@ export default {
       this.getMaterial()
     },
     // 获取全部素材
-    getMaterial () {
-      this.$axios({
+    async getMaterial () {
+      let result = await this.$axios({
         url: '/user/images',
         params: {
           // collect 为true时获取的时收藏中的数据
@@ -128,10 +124,9 @@ export default {
           page: this.page.currentPage,
           per_page: this.page.pageSize
         }
-      }).then(result => {
-        this.list = result.data.results
-        this.page.total = result.data.total_count
       })
+      this.list = result.data.results
+      this.page.total = result.data.total_count
     }
     // 页面刚加载就显示全部素材
 

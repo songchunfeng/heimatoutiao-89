@@ -55,8 +55,8 @@ export default {
       // 重新调用方法页面
       this.getComment()
     },
-    getComment () {
-      this.$axios({
+    async getComment () {
+      let result = await this.$axios({
         url: 'articles',
         // axios中有params参数
         // 让接口调用评论数据
@@ -67,14 +67,13 @@ export default {
           per_page: this.page.pageSizes
         }
 
-      }).then(result => {
-        this.list = result.data.results
-        // 获取文章的总页数
-        this.page.total = result.data.total_count
-        // 数据获取成功后显示加载页面
-        this.loading = false
-        // console.log(result)
       })
+      this.list = result.data.results
+      // 获取文章的总页数
+      this.page.total = result.data.total_count
+      // 数据获取成功后显示加载页面
+      this.loading = false
+      // console.log(result)
     },
     formatterBool (row, column, cellValue, index) {
       // row当前行数据
@@ -83,30 +82,28 @@ export default {
       // index 当前下标
       return cellValue ? '正常' : '关闭'
     },
-    openOrClose (row) {
+    async openOrClose (row) {
       let mess = row.comment_status ? '关闭' : '打开'
       // $confirm 确定时  进入then 取消时进入catch
-      this.$confirm(`您是确定${mess}评论么`).then(() => {
+      await this.$confirm(`您是确定${mess}评论么`)
       // 确定的话调用接口
-        //   地址参数/query参数/url参数/路由参数 => 可以在params中写 也可以直接拼接到url地址上
-        this.$axios({
-          url: '/comments/status',
-          method: 'put',
-          params: {
-            article_id: row.id.toString()
-          },
-          data: {
-            allow_comment: !row.comment_status
-          }
-        }).then(result => {
-        //   请求发送成功后有提示信息
-          this.$message({
-            type: 'success',
-            message: '请求成功'
-          })
-          this.getComment()
-        })
+      //   地址参数/query参数/url参数/路由参数 => 可以在params中写 也可以直接拼接到url地址上
+      await this.$axios({
+        url: '/comments/status',
+        method: 'put',
+        params: {
+          article_id: row.id.toString()
+        },
+        data: {
+          allow_comment: !row.comment_status
+        }
       })
+      //   请求发送成功后有提示信息
+      this.$message({
+        type: 'success',
+        message: '请求成功'
+      })
+      this.getComment()
     }
   },
   created () {

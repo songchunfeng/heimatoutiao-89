@@ -45,16 +45,15 @@ export default {
       // 触发公共事件
       eventBus.$emit('changeCollqpse')
     },
-    getUserInfo () {
+    async getUserInfo () {
       // let token = window.localStorage.getItem('user-token')
-      this.$axios({
+      let result = await this.$axios({
         url: '/user/profile'
       // headers: {
       //   Authorization: `Bearer ${token}`
       // }
-      }).then(result => {
-        this.useInfo = result.data
       })
+      this.useInfo = result.data
     },
     handleCommand (command) {
       if (command === 'lgout') {

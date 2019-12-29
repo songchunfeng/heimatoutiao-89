@@ -43,6 +43,10 @@ const routes = [{
 {
   path: '/login',
   component: Login
+},
+{
+  path: '*',
+  component: () => import('../views/404')
 }
 
   // {

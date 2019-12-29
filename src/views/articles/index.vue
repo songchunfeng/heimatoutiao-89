@@ -141,20 +141,20 @@ export default {
       this.$router.push(`/home/publish/${id.toString()}`)
     },
     // 删除接口
-    delArticles (id) {
+    async delArticles (id) {
       // alert(1)
-      this.$confirm('你确定删除么').then(() => {
-        this.$axios({
-          method: 'delete',
-          url: `/articles/${id.toString()}`
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功'
-          })
-          this.getConditionArticle()
-        })
+      await this.$confirm('你确定删除么').then(() => {
+
       })
+      await this.$axios({
+        method: 'delete',
+        url: `/articles/${id.toString()}`
+      })
+      this.$message({
+        type: 'success',
+        message: '删除成功'
+      })
+      this.getConditionArticle()
     },
     // 分页的切换
     changePage (newPage) {
@@ -179,21 +179,19 @@ export default {
       this.page.currentPage = 1
       this.getConditionArticle()
     },
-    getChannels () {
-      this.$axios({
+    async getChannels () {
+      let result = await this.$axios({
         url: '/channels'
-      }).then(result => {
-        this.channels = result.data.channels
       })
+      this.channels = result.data.channels
     },
-    getArticles (params) {
-      this.$axios({
+    async getArticles (params) {
+      let result = await this.$axios({
         url: '/articles',
         params
-      }).then(result => {
-        this.list = result.data.results
-        this.page.total = result.data.total_count
       })
+      this.list = result.data.results
+      this.page.total = result.data.total_count
     }
   },
   created () {

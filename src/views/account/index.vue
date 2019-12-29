@@ -62,29 +62,27 @@ export default {
     },
     // 表单校验 保存
     saveUserInfo () {
-      this.$refs.myForm.validate((isOk) => {
+      this.$refs.myForm.validate(async (isOk) => {
         if (isOk) {
-          this.$axios({
+          await this.$axios({
             url: 'user/profile',
             method: 'patch',
             data: this.formData
-          }).then(result => {
-            this.$message({
-              type: 'success',
-              message: '保存成功'
-            })
-            // 告诉头部组件数据传输成功，并调用公共实例监听
-            eventBus.$emit('updateUserInfoSuccess')// 触发一个自定义事件
           })
+          this.$message({
+            type: 'success',
+            message: '保存成功'
+          })
+          // 告诉头部组件数据传输成功，并调用公共实例监听
+          eventBus.$emit('updateUserInfoSuccess')// 触发一个自定义事件
         }
       })
     },
-    getUserInfo () {
-      this.$axios({
+    async getUserInfo () {
+      let result = await this.$axios({
         url: '/user/profile'
-      }).then(result => {
-        this.formData = result.data
       })
+      this.formData = result.data
     }
   },
   created () {

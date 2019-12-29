@@ -112,32 +112,29 @@ export default {
     },
     // 发布文章
     publishArticle (draft) {
-      this.$refs.myForm.validate(isOk => {
+      this.$refs.myForm.validate(async isOk => {
         let { id } = this.$route.params
-        this.$axios({
+        await this.$axios({
           url: id ? `/articles/${id}` : '/articles/',
           method: id ? 'put' : 'post',
           params: { draft },
           data: this.formData
-        }).then(() => {
-          this.$router.push('/home/articles')
         })
+        this.$router.push('/home/articles')
       })
     },
-    getChannels () {
-      this.$axios({
+    async getChannels () {
+      let result = await this.$axios({
         url: '/channels'
-      }).then(result => {
-        this.channels = result.data.channels
       })
+      this.channels = result.data.channels
     },
     // 获取指定id的文章
-    getArticleById (id) {
-      this.$axios({
+    async getArticleById (id) {
+      let result = await this.$axios({
         url: `/articles/${id}`
-      }).then(result => {
-        this.formData = result.data
       })
+      this.formData = result.data
     }
   },
   created () {
